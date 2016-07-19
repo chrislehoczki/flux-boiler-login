@@ -2,7 +2,7 @@
 
 import passport from "passport";
 //IMPORT SCHEMA
-const Todo = require('../models/todo.js');
+const Users = require("../models/users.js");
 
 module.exports = function (app, passport) {
 
@@ -16,7 +16,7 @@ module.exports = function (app, passport) {
 	        return next();
 
 	    // if they aren't redirect them to the home page
-	    res.send('You must be logged in to access this part of the application.');
+	    res.redirect("/");
 	};
 
 
@@ -46,15 +46,15 @@ module.exports = function (app, passport) {
 
 	//LOCAL
 
-    app.post('/signup', 
+    app.post('/auth/signup', 
     	passport.authenticate('local-signup', {
         successRedirect : '/', // redirect to the secure profile section
         failureRedirect : '/loginfailure'
     }));
     
      // process the login form
-    app.post('/login', passport.authenticate('local-login', {
-        successRedirect : '/', // redirect to the secure profile section
+    app.post('/auth/login', passport.authenticate('local-login', {
+        successRedirect : '/success', // redirect to the secure profile section
         failureRedirect : '/signinfailure'
     }));
 
@@ -70,6 +70,11 @@ module.exports = function (app, passport) {
     		res.send({message: "There was an error logging you in, please check your email and password or your social login information.", failure: true})
     	});
 
+	app.route("/success")
+		.get(function (req, res) {
+			res.send({message: "Success", failure: false})
+		});
+
 
     //LOGOUT
 
@@ -78,65 +83,97 @@ module.exports = function (app, passport) {
 		.get(function (req, res) {
 			var url = req.query.redirect;
 			req.logout();
+			
 			res.redirect(url || "/");
 		});
 
 
-	//REST API
-	app.route("/api/todo/:_id?")
-		.get(function(req, res) {
 
-			Todo.find({}).exec(function(err, todos) {
-				if (err) {
-					res.send({err: err});
-				}
-				else {
-		
-					res.send(todos);
-				}
+
+	//REST API
+	app.route("/api/todo/:id?")
+		.get(isLoggedIn, function(req, res) {
+
+		const query = {_id: req.user._id};
+
+		Users
+			.findOne(query, {todos: 1, _id: 0})
+			.exec(function (err, result) {
+				if (err) { 
+						res.send({err:err});
+					}
+					else {
+						res.send(result.todos);
+				};
+
 			});
 
 		})
-		.post(function(req, res) {
+		.post(isLoggedIn, function(req, res) {
 
+			console.log("AUTHENTICATED", req.isAuthenticated())
+			const _id = req.user._id;
 			const title = req.body.title;
-			const todoObj = new Todo({title: title, complete: false});
 
-			todoObj.save(function(err, data) {
-				if (err) res.send({err: err});
-				else {
-					console.log("successfully added to db", data);
-  					res.send(data);
+			const id = Date.now();
+			const query = {_id: _id};
+
+			const todo = {title: title, complete: false, id: id};
+
+			Users
+			.findOneAndUpdate(query, { $push: {todos: todo} }, {"new": true})
+			.exec(function (err, result) {
+				if (err) { 
+						res.send({err: err})
+					}
+					else {
+						res.send(result.todos[result.todos.length-1]);
 				}
-	  				
+
 			});
 
 
-		}).delete(function(req, res) {
+		}).delete(isLoggedIn, function(req, res) {
+			console.log(req.params)
+			const todoId = req.params.id;
+			const _id = req.user._id;
+			const query = {_id: _id}
 
-			const _id = req.params._id;
-
-			Todo.findOneAndRemove({_id: _id}, function(err, data) {
-				if (err) res.send({err: err});
-				else {
-					console.log("successfully removed", data);
-					res.send(data);
+			console.log(todoId)
+			Users
+			.findOneAndUpdate(query, { $pull: {"todos": {id: +todoId} } }, {"new": true})
+			.exec(function (err, result) {
+				if (err) { 
+						res.send({err: err})
+					}
+					else {
+						console.log(result.todos)
+						res.send(result.todos);
 				}
+
 			});
 
-		
+		}).put(isLoggedIn, function(req, res) {
 
-		}).put(function(req, res) {
-
-			let {_id, status} = req.body;
+			const _id = req.user.id;
+			let {id, status} = req.body;
 			status = JSON.parse(status);
-			Todo.findOneAndUpdate({_id: _id}, {$set: {complete: status}}, {new: true}, function(err, data) {
-				if (err) res.send({err: err});
-				else {
-					console.log("successfully updated", data);
-					res.send(data);
-				}
 
+			const query = {_id: _id, "todos.id": +id};
+			console.log(status)
+
+			console.log(query)
+
+			Users
+			.findOneAndUpdate(query, { $set: {"todos.$.complete" : status}}, {"new": true})
+			.exec(function (err, result) {
+				if (err) { 
+						res.send({err: err})
+					}
+					else {
+						console.log("result from db", result.todos)
+						res.send(result.todos);
+				}
 
 			});
 

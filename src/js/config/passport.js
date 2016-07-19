@@ -2,11 +2,10 @@
 
 //STRATEGIES
 
-var FacebookStrategy = require('passport-facebook').Strategy;
-var LocalStrategy = require('passport-local').Strategy;
-
-var User = require('../models/users');
-var configAuth = require('./auth');
+const FacebookStrategy = require('passport-facebook').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
+import User from '../models/users';
+import configAuth from './auth';
 
 
 module.exports = function (passport) {
@@ -49,12 +48,12 @@ module.exports = function (passport) {
 
                 // if there is no user with that email
                 // create the user
-                var newUser            = new User();
+                let newUser            = new User();
 
                 // set the user's local credentials
                 newUser.local.email    = email;
                 newUser.local.password = newUser.generateHash(password);
-                newUser.local.name = req.body.name;
+                newUser.local.firstName = req.body.firstName;
                 newUser.local.profileImg = "/public/images/profile.png"
                 // save the user
                 newUser.tips = [];
@@ -91,7 +90,7 @@ passport.use('local-login', new LocalStrategy({
         // we are checking to see if the user trying to login already exists
         User.findOne({ 'local.email' :  email }, function(err, user) {
             // if there are any errors, return the error before anything else
-            console.log(user)
+            
             if (err)
                 return done(err);
 
@@ -142,9 +141,8 @@ passport.use('local-login', new LocalStrategy({
                     return done(null, user); // user found, return that user
                 } else {
                     // if there is no user found with that facebook id, create them
-                    var newUser = new User();
-                    console.log(profile)
-					
+                    let newUser = new User();
+                   
                     // set all of the facebook information in our user model
                     newUser.facebook.id    = profile.id; // set the users facebook id                   
                     newUser.facebook.token = token; // we will save the token that facebook provides to the user                    

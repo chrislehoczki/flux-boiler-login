@@ -14,13 +14,13 @@ export default class Featured extends React.Component {
   };
 
   deleteTodo() {
-    todoActions.deleteTodo(this.props._id);
+    todoActions.deleteTodo(this.props.id);
   };
 
   markComplete() {
-    
+
     this.setState({complete: !this.state.complete}, function() {
-      todoActions.changeStatus(this.state.complete, this.props._id);
+      todoActions.changeStatus(this.state.complete, this.props.id);
     });
   };
 
@@ -47,10 +47,9 @@ export default class Featured extends React.Component {
 
     return (
       <div style={todoStyle}>
-
-      <p style={inline}>{this.props.title}</p>
-      <div style={inline}> <p style={inline}> Complete </p> <input style={inline} onChange={this.markComplete} checked={this.state.complete} type="checkbox" name="completed" value={this.state.complete}/> </div>
-      <button style={inline} onClick={this.deleteTodo} className="">Delete</button>
+        <p style={inline}>{this.props.title}</p>
+        <div style={inline}> <p style={inline}> Complete </p> <input style={inline} onChange={this.markComplete} checked={this.state.complete} type="checkbox" name="completed" value={this.state.complete}/> </div>
+        <button style={inline} onClick={this.deleteTodo} className="">Delete</button>
       </div>
     );
   }

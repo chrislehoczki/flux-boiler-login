@@ -8,6 +8,4 @@ module.exports = {
         'callbackURL'   : process.env.APP_URL + "auth/facebook/callback"
     }
 
-
-	
 };

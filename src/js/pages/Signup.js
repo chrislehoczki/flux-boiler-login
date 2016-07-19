@@ -10,19 +10,15 @@ export default class Featured extends React.Component {
 		}
 		this.sendForm = this.sendForm.bind(this);
 		this.checkEmail = this.checkEmail.bind(this);
-		this.addUser = this.addUser.bind(this);
+		this.addEmail = this.addEmail.bind(this);
 		this.addPassword = this.addPassword.bind(this);
 		this.confirmPassword = this.confirmPassword.bind(this);
 		this.confirmName = this.confirmName.bind(this);
-		this.createUserMarkup = this.createUserMarkup.bind(this);
-		this.createPasswordMarkup = this.createPasswordMarkup.bind(this);
-		this.createErrorMarkup = this.createErrorMarkup.bind(this);
-		this.createConfirmPasswordMarkup = this.createConfirmPasswordMarkup.bind(this);
 	};
 
     sendForm() {
 
-      var component = this;
+      const component = this;
 
         //IF PASSWORDS DONT MATCH
       if (component.state.password !== component.state.confirmPassword) {
@@ -48,13 +44,13 @@ export default class Featured extends React.Component {
       }
 
       //MAKE PARAMS AND SEND OFF HERE
-      var url = "/signup"
+      const url = "/auth/signup"
       
 
-      var username = this.state.user;
-      var password = this.state.confirmPassword;
-      var name = this.state.name;
-      var params = "username=" + username + "&password=" + password + "&name=" + name;
+      const username = this.state.user;
+      const password = this.state.confirmPassword;
+      const name = this.state.name;
+      const params = "username=" + username + "&password=" + password + "&firstName=" + name;
       $.post(url, params, function(data) {
           if (data.failure) {
               component.setState({errorMessage: data.message})
@@ -71,12 +67,12 @@ export default class Featured extends React.Component {
 
         this.setState({errorMessage: ""})
 
-        var component = this;
+        const component = this;
 
-        var user = e.target.value;
+        const user = e.target.value;
         console.log(user);
-        var reg = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i
-        var test = user.match(reg)
+        const reg = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i
+        const test = user.match(reg)
         console.log(test)
 
         if (!test) {
@@ -91,23 +87,23 @@ export default class Featured extends React.Component {
 
 
     addEmail(e) {
-      var user = e.target.value;
+      const user = e.target.value;
       this.setState({user: user})
     };
 
     addPassword(e) {
           this.setState({errorMessage: ""})
-          var component = this;
-          var password = e.target.value;
+          const component = this;
+          const password = e.target.value;
           this.setState({password: password}, function() {
             if (component.state.password === "") {
           component.setState({passwordMessage: "", passwordAlert: "success"})
         }
           })
 
-        var regex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(.{8,})$/
+        const regex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(.{8,})$/
 
-        var test = password.match(regex)
+        const test = password.match(regex)
         
           if (test) {
             this.setState({passwordMessage: "", passwordAlert: "success", passwordOK: true})
@@ -121,7 +117,7 @@ export default class Featured extends React.Component {
 
     confirmPassword(e) {
       this.setState({errorMessage: ""})
-      var component = this;
+      const component = this;
         this.setState({confirmPassword: e.target.value}, function() {
             if (component.state.password !== component.state.confirmPassword) {
               component.setState({passwordMatch: "Your passwords don't match!", confirmPasswordAlert: "warning"})

@@ -18,12 +18,25 @@ class LoginStore extends EventEmitter {
 
   getUserName() {
     let user = this.user ? this.user : null;
-
+    console.log("CALLING GET USERNAME", user)
     if (!user) {
       return null;
     }
 
-    let mainData = this.user.facebook ? this.user.facebook : this.user.local;
+    console.log("FACEBOOK", this.user.facebook)
+    console.log("LOCAL", this.user.local)
+    let mainData;
+    if (this.user.facebook) {
+      if (this.user.facebook.firstName) {
+        mainData = this.user.facebook;
+      }
+      else {
+         mainData = this.user.local;
+      }
+    }
+    else {
+      mainData = this.user.local;
+    }
     console.log("this is user data", mainData)
    
     return mainData.firstName;
@@ -35,8 +48,11 @@ class LoginStore extends EventEmitter {
     switch(action.type) {
       case "INITIATE_USER": {
         console.log("calling initiate user");
-        
         this.user = action.user;
+        break;
+      }
+      case "REMOVE_USER": {
+        this.user = null;
         break;
       };
     };

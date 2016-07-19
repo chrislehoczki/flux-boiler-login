@@ -7,3 +7,9 @@ export function initiateUser(user) {
   });
 };
 
+export function removeUser() {
+  dispatcher.dispatch({
+    type: "REMOVE_USER",
+    user: null,
+  });
+};

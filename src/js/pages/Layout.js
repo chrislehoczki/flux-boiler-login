@@ -10,16 +10,15 @@ export default class Layout extends React.Component {
     const containerStyle = {
       marginTop: "60px"
     };
-
+   
     const userName = loginStore.getUserName();
     
     return (
 
       <div>
-
         <SimpleNav location={location} />
 
-        <p> Hello {userName} </p>
+        <p className="text-center"> {userName ? "Hello " + userName : null} </p>
         <div className="container" style={containerStyle}>
               {this.props.children}
           <Footer/>

@@ -32,12 +32,12 @@ export function sendTodo(title) {
         });
 };
 
-export function changeStatus(status, _id) {
+export function changeStatus(status, id) {
 
   $.ajax({
           url: "/api/todo",
           type: 'PUT',
-          data: {status, _id},
+          data: {status, id},
           error: function(jqXHR, textStatus, errorThrown) {
             console.log('ERRORS: ' + textStatus);
           },
@@ -52,10 +52,10 @@ export function changeStatus(status, _id) {
         });
 };
 
-export function deleteTodo(_id) {
-  console.log("id at actions", _id)
+export function deleteTodo(id) {
+  
   $.ajax({
-    url: '/api/todo/' + _id,
+    url: '/api/todo/' + id,
     type: 'DELETE',
     success: function(result) {
         if (result.err) {
@@ -63,8 +63,12 @@ export function deleteTodo(_id) {
             return;
         }
 
-        console.log(result)
-        getStockFromDB();
+        console.log(result);
+        dispatcher.dispatch({
+              type: "DELETED_TODO",
+              todos: result,
+              });
+        
     }, 
     error: function(err) {
       console.log(err);
@@ -85,7 +89,7 @@ export function getStockFromDB() {
           return;
         }
       dispatcher.dispatch({
-            type: "UPDATE_TODOS",
+            type: "UPDATED_TODOS",
             todos: data
           });
       return data;

@@ -9,11 +9,11 @@ class TodoStore extends EventEmitter {
   };
 
   getAll() {
-    return this.items;
+    return this.todos;
   };
   
   addTodo(todo) {
-    this.items.push(todo);
+    this.todos.push(todo);
     this.emit("change");
   };
 
@@ -21,16 +21,22 @@ class TodoStore extends EventEmitter {
     switch(action.type) {
       case "ADDED_TODO": {
         this.addTodo(action.todo);
+        console.log(this.todos)
         break;
       }
-      case "UPDATE_TODOS": {
-        this.items = action.todos;
-        console.log("this is new state after calling update items", this.items)
+      case "UPDATED_TODOS": {
+        this.todos = action.todos;
+        console.log("this is new state after calling update items", this.todos)
         this.emit("change");
         break;
       }
+      case "DELETED_TODO": {
+        this.todos = action.todos;
+        this.emit("change");
+        return;
+      }
       case "INITIATE_TODOS": {
-        this.items = action.todos;
+        this.todos = action.todos;
         break;
       }
     }
