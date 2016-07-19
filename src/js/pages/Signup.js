@@ -38,6 +38,7 @@ export default class Featured extends React.Component {
         return;
       }
 
+      //IF NO NAME GIVEN
       if (!component.state.name) {
         component.setState({errorMessage: "You haven't submitted a username, please check again."})
         return;

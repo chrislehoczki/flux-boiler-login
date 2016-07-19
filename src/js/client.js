@@ -2,11 +2,9 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-
-
-
-
-
+import createBrowserHistory from 'history/lib/createBrowserHistory';
+import { Router, Route, IndexRoute, hashHistory, browserHistory } from "react-router";
+import routes from "./routes.js";
 
 //THIS SYNCS SERVER AND CLIENT PROPS
 import * as todoActions from "./actions/todoActions.js";
@@ -21,10 +19,9 @@ let user = document.getElementById("user") ? JSON.parse(document.getElementById(
 todoActions.initiateTodos(initialState);
 loginActions.initiateUser(user);
 
-import createBrowserHistory from 'history/lib/createBrowserHistory';
+
 let history = createBrowserHistory();
-import { Router, Route, IndexRoute, hashHistory, browserHistory } from "react-router";
-import routes from "./routes.js";
+
 
 //RENDER APP IN HTML
 const app = document.getElementById('app');
