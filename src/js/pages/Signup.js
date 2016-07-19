@@ -53,7 +53,7 @@ export default class Featured extends React.Component {
       const params = "username=" + username + "&password=" + password + "&firstName=" + name;
       $.post(url, params, function(data) {
           if (data.failure) {
-              component.setState({errorMessage: data.message})
+              component.setState({errorMessage: data.message});
           }
           else {
             window.location.replace("/");
@@ -76,12 +76,26 @@ export default class Featured extends React.Component {
         console.log(test)
 
         if (!test) {
-          component.setState({emailMessage: "That email address is not valid", emailValid: false});
+          component.setState({emailMessage: "That email address is not valid", emailClass: "alert alert-warning", emailValid: false});
           return;
         }
         else {
-          component.setState({emailMessage: "", emailValid: true, emailOK: true});
+          component.setState({emailMessage: "", emailValid: true});
         }
+
+        const url = "/checkuser/" + user;
+
+        $.get(url, function(data) {
+          
+            component.setState({emailMessage: data.message}, function() {
+                if (data.alert === "success") {
+                  component.setState({emailOK: true, emailClass: "alert alert-success"});
+                }
+                else {
+                  component.setState({emailOK: false, emailClass: "alert alert-warning"});
+                }
+            });
+        });
 
     };
 
@@ -156,7 +170,9 @@ export default class Featured extends React.Component {
               <input type="text" onBlur={this.addEmail}  onChange={this.checkEmail} className="form-control" name="username" id="username" />
             </div>
 
-            {this.state.emailMessage ? <p className="alert alert-warning"> {this.state.emailMessage} </p> : null}
+            {this.state.emailMessage ? <p className={this.state.emailClass}> {this.state.emailMessage} </p> : null}
+
+
 
             <div className="form-group">
             <label>Password</label>

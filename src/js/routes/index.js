@@ -180,6 +180,34 @@ module.exports = function (app, passport) {
 		});
 
 
+	app.route('/checkuser/:email')
+		.get(function(req, res) {
+			const email = req.params.email;
+			
+			let message;
 
+			Users.find({"local.email": email}, { "local.email": 1, _id: 0 })
+				.exec(function (err, result) {
+					if (err) { throw err; }
+					console.log(result)
+					console.log(result.length)
+					if (result.length === 0) {
+						message = "Your email is available."
+						let obj = {}
+						obj.message = message
+						obj.alert = "success"
+						res.json(obj)
+					}
+					else {
+						message = "That email has already been registered."
+							let obj = {}
+							obj.message = message
+							obj.alert = "warning"
+					
+							res.json(obj)
+
+					}
+				});
+		});
 
 };
