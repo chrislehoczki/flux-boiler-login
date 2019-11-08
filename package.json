@@ -23,7 +23,7 @@
     "flux": "^2.1.1",
     "forever": "^0.15.2",
     "history": "^1.17.0",
-    "mongoose": "^4.5.3",
+    "mongoose": "^5.7.8",
     "multer": "^1.1.0",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.1",
